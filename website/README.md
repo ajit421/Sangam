@@ -23,9 +23,9 @@ npm test         # CSV parser tests
 Category names: `pipes, tanks, pumps, sanitary, taps, tiles, paints`. Units: `piece, length, litre, kg, sqft, bag, set`. Leave `price` empty to show "ask for price".
 
 ## Deploy for ₹0 (Cloudflare Pages)
-1. Push this `website/` folder to a GitHub repo.
+1. The site lives in the `website/` folder of the repo (github.com/ajit421/Sangam).
 2. Cloudflare dashboard → Workers & Pages → Create → Pages → connect the repo.
-   Build command: `npm run build`. Output directory: `dist`. Project name: `sangamhardware` (gives `sangamhardware.pages.dev`).
+   Root directory: `website`. Build command: `npm run build`. Output directory: `dist`. Project name: `sangamhardware` (gives `sangamhardware.pages.dev`).
    If that name is taken, change `SITE_URL` in `src/data/shop.ts` and the URLs in `public/robots.txt` and `public/sitemap.xml`.
 3. Every push to GitHub redeploys automatically.
 
@@ -33,7 +33,7 @@ Category names: `pipes, tanks, pumps, sanitary, taps, tiles, paints`. Units: `pi
 1. Import `src/data/products.csv` into a new Google Sheet in the owner's Google account. Keep the header row exactly as it is.
 2. In the Sheet: File → Share → Publish to web → choose the sheet → **CSV** → Publish. Copy the link.
 3. In Cloudflare Pages → Settings → Variables, add `SHEET_CSV_URL` = that link.
-4. Auto-refresh: Cloudflare Pages → Settings → Builds → Deploy hooks → create one. Add its URL to GitHub repo → Settings → Secrets → Actions as `CF_DEPLOY_HOOK`. `.github/workflows/refresh-prices.yml` then rebuilds the site every 6 hours, so the owner's changes go live within 6 hours.
+4. Auto-refresh: Cloudflare Pages → Settings → Builds → Deploy hooks → create one. Add its URL to GitHub repo → Settings → Secrets → Actions as `CF_DEPLOY_HOOK`. `.github/workflows/refresh-prices.yml` (at the repo root) then rebuilds the site every 6 hours, so the owner's changes go live within 6 hours.
 
 The owner just edits the Sheet in the Google Sheets app. If the Sheet ever fails to load, the build falls back to `products.csv`, so the site never breaks.
 
