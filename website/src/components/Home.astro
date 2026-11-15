@@ -60,13 +60,13 @@ const btn = 'inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3
         <p class="mt-4 text-lg text-red-50 md:text-xl">{d.heroSub}</p>
         <div class="mt-7 flex flex-wrap gap-3">
           <a href={tel} class={`${btn} bg-white text-brand`}>📞 {d.call}</a>
-          <a href={wa} class={`${btn} pulse-ring bg-green-500 text-white`}>💬 {d.whatsapp}</a>
+          <a href={wa} class={`${btn} pulse-ring bg-green-700 text-white`}>💬 {d.whatsapp}</a>
           <a href={shop.directionsUrl} class={`${btn} bg-white/10 text-white ring-2 ring-white/40`}>📍 {d.directions}</a>
         </div>
       </div>
       <div class="relative mx-auto w-full max-w-md">
         <div class="rotate-2 overflow-hidden rounded-3xl border-4 border-white shadow-2xl">
-          <Image src={shopFront} alt={`${shop.nameHi} – ${shop.address.localityHi}`} widths={[480, 900]} sizes="(min-width: 768px) 450px, 92vw" loading="eager" fetchpriority="high" class="h-auto w-full" />
+          <Image src={shopFront} alt={`${shop.nameHi} – ${shop.address.localityHi}`} widths={[400, 700]} sizes="(min-width: 768px) 450px, 92vw" loading="eager" fetchpriority="high" class="h-auto w-full" />
         </div>
         <div class="float absolute -bottom-5 -left-3 rounded-2xl bg-white px-4 py-2 text-ink shadow-xl">
           <div class="text-2xl font-extrabold">{shop.rating.value.toFixed(1)} <span class="text-sun">★★★★★</span></div>
@@ -83,7 +83,7 @@ const btn = 'inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3
 
   <!-- BRANDS -->
   <section class="overflow-hidden border-b border-black/5 bg-white py-4" aria-label={d.brandsTitle}>
-    <div class="marquee flex w-max gap-12 text-2xl font-extrabold text-stone-400">
+    <div class="marquee flex w-max gap-12 text-2xl font-extrabold text-stone-500">
       {[...shop.brands, ...shop.brands].map((b, i) => <span aria-hidden={i >= shop.brands.length ? 'true' : undefined}>{b}</span>)}
     </div>
   </section>
@@ -221,7 +221,7 @@ const btn = 'inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3
         </dl>
         <div class="mt-6 flex flex-wrap gap-3">
           <a href={tel} class={`${btn} bg-brand text-white`}>📞 {d.call}</a>
-          <a href={wa} class={`${btn} bg-green-500 text-white`}>💬 WhatsApp</a>
+          <a href={wa} class={`${btn} bg-green-700 text-white`}>💬 WhatsApp</a>
           <a href={shop.directionsUrl} class={`${btn} bg-sky text-white`}>📍 {d.directions}</a>
         </div>
       </div>
@@ -234,14 +234,14 @@ const btn = 'inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3
 <footer class="bg-ink pb-24 pt-8 text-center text-stone-400 md:pb-8">
   <img src="/logo.svg" alt="" width="40" height="40" class="mx-auto h-10 w-10" />
   <p class="mt-2 font-bold text-white">{shop.nameHi} · {shop.name}</p>
-  <p>{d.footer} · <a href={tel} class="text-sun">{shop.phones[0]}</a></p>
+  <p>{d.footer} · <a href={tel} class="text-sun underline">{shop.phones[0]}</a></p>
   <p class="mt-2 text-sm">{langs.map((l) => <a href={langPath[l]} class="mx-2 hover:text-white">{langLabel[l]}</a>)}</p>
 </footer>
 
 <!-- Mobile action bar -->
 <div class="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-black/10 bg-white text-center text-sm font-bold shadow-2xl md:hidden">
   <a href={tel} class="py-2.5 text-brand"><span class="block text-2xl">📞</span>{d.call}</a>
-  <a href={wa} class="bg-green-500 py-2.5 text-white"><span class="block text-2xl">💬</span>WhatsApp</a>
+  <a href={wa} class="bg-green-700 py-2.5 text-white"><span class="block text-2xl">💬</span>WhatsApp</a>
   <button data-open-cart class="py-2.5 text-sky"><span class="block text-2xl">🛒</span>{d.order.view} (<span data-count>0</span>)</button>
 </div>
 
@@ -258,11 +258,11 @@ const btn = 'inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3
     <p data-empty class="mt-4 text-stone-600">{d.order.empty}</p>
     <ul data-list class="mt-4 max-h-64 space-y-2 overflow-y-auto"></ul>
     <div class="mt-4 grid gap-2">
-      <input data-name type="text" placeholder={d.order.name} autocomplete="name" class="rounded-xl border border-stone-300 px-4 py-3 text-lg" />
-      <input data-village type="text" placeholder={d.order.village} class="rounded-xl border border-stone-300 px-4 py-3 text-lg" />
+      <input data-name name="name" type="text" placeholder={d.order.name} autocomplete="name" class="rounded-xl border border-stone-300 px-4 py-3 text-lg" />
+      <input data-village name="village" type="text" placeholder={d.order.village} class="rounded-xl border border-stone-300 px-4 py-3 text-lg" />
     </div>
     <div class="mt-4 flex gap-2">
-      <button data-send class="flex-1 rounded-xl bg-green-500 px-4 py-3 text-lg font-bold text-white disabled:opacity-40">💬 {d.order.send}</button>
+      <button data-send class="flex-1 rounded-xl bg-green-700 px-4 py-3 text-lg font-bold text-white disabled:opacity-40">💬 {d.order.send}</button>
       <button data-clear class="rounded-xl bg-stone-100 px-4 py-3 font-bold">{d.order.clear}</button>
     </div>
   </div>

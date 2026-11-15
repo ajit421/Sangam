@@ -78,7 +78,9 @@ const schema = [
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap" rel="stylesheet" />
+    <!-- Font loads without blocking first paint; system Devanagari font shows until it arrives (matters on slow village networks). -->
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap" rel="stylesheet" /></noscript>
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   </head>
   <body class="font-sans antialiased">
