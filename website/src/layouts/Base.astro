@@ -57,6 +57,21 @@ const schema = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Pick the theme before first paint (saved choice, else the phone's setting) so dark-mode users never see a white flash. -->
+    <script is:inline>
+      (() => {
+        let saved = null;
+        try { saved = localStorage.getItem('theme'); } catch {}
+        const dark = window.matchMedia('(prefers-color-scheme: dark)');
+        const apply = (t) => { document.documentElement.dataset.theme = t; };
+        apply(saved || (dark.matches ? 'dark' : 'light'));
+        dark.addEventListener('change', (e) => {
+          let s = null;
+          try { s = localStorage.getItem('theme'); } catch {}
+          if (!s) apply(e.matches ? 'dark' : 'light');
+        });
+      })();
+    </script>
     <title>{d.title}</title>
     <meta name="description" content={d.desc} />
     <link rel="canonical" href={url} />
