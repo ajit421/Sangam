@@ -1,0 +1,12 @@
+---
+// Lucide icon inlined as SVG at build time (no runtime JS). Decorative by default; pass `label` when the icon carries meaning alone.
+const icons = import.meta.glob<string>('/node_modules/lucide-static/icons/*.svg', { query: '?raw', import: 'default' });
+const { name, class: cls = 'size-5', label } = Astro.props as { name: string; class?: string; label?: string };
+const load = icons[`/node_modules/lucide-static/icons/${name}.svg`];
+if (!load) throw new Error(`Unknown icon: ${name}`);
+const svg = (await load())
+  .replace(/<!--[\s\S]*?-->/, '')
+  .replace(/class="[^"]*"/, `class="${cls} shrink-0"`)
+  .replace('<svg', label ? `<svg role="img" aria-label="${label}"` : '<svg aria-hidden="true"');
+---
+<Fragment set:html={svg} />

@@ -2,6 +2,7 @@
 // Cloudflare Pages serves this with a real 404 status; without it, unknown URLs returned the homepage as 200 (bad for Google).
 import '../styles/global.css';
 import { shop } from '../data/shop';
+import Icon from '../components/Icon.astro';
 ---
 <!doctype html>
 <html lang="hi">
@@ -14,12 +15,12 @@ import { shop } from '../data/shop';
   </head>
   <body class="grid min-h-screen place-items-center p-6 text-center font-sans">
     <main>
-      <img src="/logo.svg" alt="" width="72" height="72" class="mx-auto h-18 w-18" />
+      <img src="/logo.svg" alt="" width="72" height="72" class="mx-auto size-18" />
       <h1 class="mt-4 text-3xl font-extrabold">यह पेज नहीं मिला</h1>
-      <p class="mt-1 text-lg text-stone-600">Page not found</p>
+      <p class="mt-1 text-lg text-ink-soft">Page not found</p>
       <div class="mt-6 flex flex-wrap justify-center gap-3">
-        <a href="/" class="rounded-2xl bg-brand px-5 py-3 text-lg font-bold text-white">🏠 {shop.nameHi}</a>
-        <a href={`tel:+91${shop.phones[0]}`} class="rounded-2xl bg-sky px-5 py-3 text-lg font-bold text-white">📞 {shop.phones[0]}</a>
+        <a href="/" class="inline-flex items-center gap-2 rounded-xl bg-brick px-5 py-3 text-lg font-bold text-white"><Icon name="house" />{shop.nameHi}</a>
+        <a href={`tel:+91${shop.phones[0]}`} class="inline-flex items-center gap-2 rounded-xl bg-indigo px-5 py-3 text-lg font-bold text-white"><Icon name="phone" />{shop.phones[0]}</a>
       </div>
     </main>
   </body>
