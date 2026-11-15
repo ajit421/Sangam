@@ -28,6 +28,8 @@ export const shop = {
   areasHi: ['मोपती बाजार', 'सिकरहट्टा', 'भोजपुर'],
   brands: ['Asian Paints', 'Berger', 'Parryware', 'Hindware', 'Supreme', 'Prince'],
   mapsUrl: 'https://maps.google.com/?cid=4184313526596026266',
+  // shortcut: opens the Maps listing; replace with the owner's direct review link (Business Profile → "Ask for reviews", g.page/r/…/review)
+  reviewUrl: 'https://maps.google.com/?cid=4184313526596026266',
   directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=25.2564052,84.4986037',
   mapEmbed:
     'https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d361.7818692053405!2d84.4984899!3d25.2563939!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x398d6db97f75f6e5%3A0x3a11aafba59e3f9a!2sSangam%20Hardware%20Mopti!5e1!3m2!1sen!2sin!4v1794741284496!5m2!1sen!2sin',

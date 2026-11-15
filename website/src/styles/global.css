@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* Anek Devanagari draws "·" (U+00B7) with zero width, so separators like "मोपती बाजार · भोजपुर" collide.
+   This alias serves only that character from the phone's own font; everything else still uses Anek. */
+@font-face {
+  font-family: "Dot";
+  src: local("Roboto"), local("Helvetica Neue"), local("Helvetica"), local("Arial"), local("Noto Sans"), local("DejaVu Sans");
+  unicode-range: U+00B7;
+}
+
 /* Palette taken from the shop's own signboard and grand-opening poster: brick red, marigold, royal blue, on warm paper. */
 @theme {
   --color-paper: #faf6ee;
@@ -17,7 +25,7 @@
   /* Fixed colours for sections that stay dark in both themes (top strip, visit section, footer). */
   --color-night: #211b16;
   --color-cream: #faf6ee;
-  --font-sans: "Anek Devanagari", "Noto Sans Devanagari", system-ui, sans-serif;
+  --font-sans: "Dot", "Anek Devanagari", "Noto Sans Devanagari", system-ui, sans-serif;
   --font-display: "Eczar", "Noto Serif Devanagari", Georgia, serif;
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }

@@ -1,4 +1,5 @@
 # Rebuilds the site every 6 hours so the owner's Google Sheet price changes go live. Free on GitHub Actions.
+# Needs the repo secret CF_DEPLOY_HOOK (Cloudflare Pages → Settings → Builds → Deploy hooks); skips quietly until it exists.
 name: Refresh prices
 on:
   schedule: [{ cron: '0 */6 * * *' }]
@@ -7,4 +8,8 @@ jobs:
   rebuild:
     runs-on: ubuntu-latest
     steps:
-      - run: curl -fsS -X POST "${{ secrets.CF_DEPLOY_HOOK }}"
+      - env:
+          HOOK: ${{ secrets.CF_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then echo "CF_DEPLOY_HOOK secret not set yet, skipping."; exit 0; fi
+          curl -fsS -X POST "$HOOK"

@@ -24,7 +24,7 @@ npm install
 astro dev --background        # dev server on :4321; manage with astro dev stop|status|logs
 npm run build                 # static output in dist/
 npx astro preview             # serve the built dist/
-npm test                      # node:test on src/lib/csv.test.ts
+npm test                      # node:test on src/lib/csv.test.ts (CSV parser + catalog)
 node --test --test-name-pattern="quoted" src/lib/csv.test.ts   # single test
 ```
 
@@ -38,7 +38,7 @@ No linter is configured. Tests run on Node's built-in TypeScript stripping (Node
 
 **Shop facts come from `src/data/shop.ts`.** Phones, address, hours, geo, delivery radius, areas and reviews live there. Three outputs read them: the page, the JSON-LD (`HardwareStore` + `FAQPage`) in `Base.astro`, and the AI fact sheet `src/pages/llms.txt.ts`. Change a fact here once and all three update. `SITE_URL` is also imported by `astro.config.mjs`, but `public/robots.txt` and `public/sitemap.xml` hardcode the domain and must be updated by hand.
 
-**Products are read at build time.** `src/lib/products.ts` → `loadProducts()` fetches a published Google Sheet CSV when the `SHEET_CSV_URL` env var is set, and falls back to `src/data/products.csv` if that var is missing or the fetch fails. The CSV header (`category,name_hi,name_en,brand,price,unit`) is a contract with the owner's sheet, so don't rename columns. `category` values must match the keys of `cats` in `i18n.ts` and the `emoji` map in `Home.astro`. `unit` values must match the `units` dicts. An empty `price` renders as "ask for price".
+**Products are read at build time.** `src/lib/products.ts` → `loadProducts()` fetches a published Google Sheet CSV once per build (cached promise) when the `SHEET_CSV_URL` env var is set, and falls back to `src/data/products.csv` if the var is missing, the fetch fails, or the sheet yields no products. Row parsing lives in `src/lib/catalog.ts` → `toProducts()` (pure, unit-tested): it forgives owner typos (BOM, header/category/unit case and spaces, `₹1,250` prices; non-numeric price = "ask for price"). The CSV header (`category,name_hi,name_en,brand,price,unit`) is a contract with the owner's sheet. `category` should be a key of `cats` in `i18n.ts` (with an icon in `catIcon` in `Home.astro`); anything else is shown under the `other` group rather than dropped. `unit` values must match the `units` dicts.
 
 **Category images are picked up by file name.** Put `src/assets/categories/<category>.{jpg,png,webp}` in place and `import.meta.glob` in `Home.astro` uses it; without one, the tile shows an emoji.
 

@@ -93,9 +93,9 @@ const schema = [
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Font loads without blocking first paint; system Devanagari font shows until it arrives (matters on slow village networks). -->
-    <link href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..100,400..700&family=Eczar:wght@500..800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..100,400..700&family=Eczar:wght@500..800&display=swap" rel="stylesheet" /></noscript>
+    <!-- Fonts never block or shift the page: display=optional keeps the phone's Devanagari font if the web font is late (slow village networks), and uses it once cached. -->
+    <link href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..100,400..700&family=Eczar:wght@500..800&display=optional" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..100,400..700&family=Eczar:wght@500..800&display=optional" rel="stylesheet" /></noscript>
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   </head>
   <body class="font-sans antialiased">

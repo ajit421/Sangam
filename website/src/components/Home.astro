@@ -20,9 +20,12 @@ const priceText = (p: (typeof products)[number]) => (p.price ? `${d.from(inr(p.p
 // Category photo: drop <category>.jpg/.png/.webp into src/assets/categories and it replaces the icon tile.
 const catImages = import.meta.glob<{ default: ImageMetadata }>('../assets/categories/*.{jpg,jpeg,png,webp}', { eager: true });
 const catImg = (c: string) => Object.entries(catImages).find(([p]) => p.split('/').pop()!.split('.')[0] === c)?.[1].default;
-const catIcon: Record<string, string> = { pipes: 'spline', tanks: 'cylinder', pumps: 'cog', sanitary: 'bath', taps: 'shower-head', tiles: 'layout-grid', paints: 'paint-roller' };
-const groups = (Object.keys(d.cats) as (keyof typeof d.cats)[])
-  .map((c) => ({ c, img: catImg(c), items: products.filter((p) => p.category === c) }))
+const catIcon: Record<string, string> = { pipes: 'spline', tanks: 'cylinder', pumps: 'cog', sanitary: 'bath', taps: 'shower-head', tiles: 'layout-grid', paints: 'paint-roller', other: 'wrench' };
+const catKeys = Object.keys(d.cats) as (keyof typeof d.cats)[];
+// A category the site doesn't know (owner typo or new kind of item) lands in "other" instead of disappearing.
+const inCat = (p: (typeof products)[number], c: string) => (c === 'other' ? !catKeys.includes(p.category as never) || p.category === 'other' : p.category === c);
+const groups = catKeys
+  .map((c) => ({ c, img: catImg(c), items: products.filter((p) => inCat(p, c)) }))
   .filter((g) => g.items.length);
 
 const swatchHex = ['#E8772E', '#F2C230', '#7FC3E0', '#5B9A3C', '#E57FA4', '#B3261E', '#F1E3BF', '#8D96A0'];
@@ -47,7 +50,7 @@ const [openH, closeH] = [shop.hours.open, shop.hours.close].map((h) => parseInt(
 
 <!-- Top strip: live open/closed status (filled in by script; plain hours without JS) -->
 <div class="bg-night text-sm text-cream">
-  <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-5 gap-y-1 px-4 py-2">
+  <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-5 px-4 py-1 sm:py-2">
     <p data-status data-open-h={openH} data-close-h={closeH} data-open={d.topOpen} data-closed={d.topClosed} data-until={d.topUntil} data-opens={d.topOpens}
        class="flex items-center gap-2">
       <span data-dot class="size-2.5 rounded-full bg-stone-400" aria-hidden="true"></span>
@@ -59,7 +62,7 @@ const [openH, closeH] = [shop.hours.open, shop.hours.close].map((h) => parseInt(
     <nav aria-label="Language" class="ml-auto flex sm:hidden">
       {langs.map((l) => (
         <a href={langPath[l]} hreflang={l} aria-current={l === lang ? 'page' : undefined}
-           class:list={['px-2 py-1.5', l === lang ? 'font-semibold text-marigold underline underline-offset-4' : 'text-cream/80']}>{langLabel[l]}</a>
+           class:list={['px-2 py-2.5', l === lang ? 'font-semibold text-marigold underline underline-offset-4' : 'text-cream/80']}>{langLabel[l]}</a>
       ))}
     </nav>
   </div>
@@ -112,7 +115,7 @@ const [openH, closeH] = [shop.hours.open, shop.hours.close].map((h) => parseInt(
           <a href={tel} class={`${btn} bg-brick text-white shadow-[0_3px_0_var(--color-brick-dark)] hover:bg-brick-dark`}><Icon name="phone" />{d.call}</a>
           <a href={wa} class={`${btn} border-2 border-leaf bg-surface text-leaf hover:bg-leaf hover:text-white`}><Icon name="message-circle" />{d.whatsapp}</a>
         </div>
-        <a href={shop.directionsUrl} class="mt-5 inline-flex items-center gap-1.5 py-1 font-semibold text-indigo underline decoration-indigo/30 decoration-2 underline-offset-4 hover:decoration-indigo">
+        <a href={shop.directionsUrl} class="mt-3 inline-flex min-h-11 items-center gap-1.5 font-semibold text-indigo underline decoration-indigo/30 decoration-2 underline-offset-4 hover:decoration-indigo">
           <Icon name="navigation" class="size-4" />{d.directions}
         </a>
       </div>
@@ -169,7 +172,7 @@ const [openH, closeH] = [shop.hours.open, shop.hours.close].map((h) => parseInt(
               class="flex min-h-11 items-center gap-2 rounded-full border border-line bg-paper px-4 py-2 font-medium transition-colors hover:border-ink/40 aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-paper lg:rounded-xl">
               <Icon name={f.icon} class="size-4" />
               <span>{f.label}</span>
-              <span class="ml-auto pl-1 text-sm tabular-nums opacity-70">{f.n}</span>
+              <span class="ml-auto pl-1 text-sm font-normal tabular-nums">{f.n}</span>
             </button>
           ))}
         </div>
@@ -309,7 +312,7 @@ const [openH, closeH] = [shop.hours.open, shop.hours.close].map((h) => parseInt(
           </div>
         </div>
         <div class="mt-7 flex flex-wrap gap-3">
-          <a href={shop.mapsUrl} class={`${btn} bg-marigold text-base text-night hover:brightness-95`}><Icon name="star" />{d.writeReview}</a>
+          <a href={shop.reviewUrl} class={`${btn} bg-marigold text-base text-night hover:brightness-95`}><Icon name="star" />{d.writeReview}</a>
           <a href={shop.mapsUrl} class="inline-flex min-h-12 items-center gap-1.5 px-1 font-semibold text-indigo underline decoration-indigo/30 decoration-2 underline-offset-4 hover:decoration-indigo">{d.seeAll}<Icon name="arrow-right" class="size-4" /></a>
         </div>
       </div>
@@ -376,7 +379,7 @@ const [openH, closeH] = [shop.hours.open, shop.hours.close].map((h) => parseInt(
 <footer class="border-t border-white/10 bg-night pb-24 pt-8 text-cream/70 md:pb-8">
   <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4">
     <p class="flex items-center gap-3"><img src="/logo.svg" alt="" width="32" height="32" class="size-8" /><span><span class="font-display font-bold text-cream">{shop.nameHi}</span> · {d.footer}</span></p>
-    <nav aria-label="Language" class="flex gap-4 text-sm">{langs.map((l) => <a href={langPath[l]} class="py-2 hover:text-cream">{langLabel[l]}</a>)}</nav>
+    <nav aria-label="Language" class="flex gap-4 text-sm">{langs.map((l) => <a href={langPath[l]} hreflang={l} class="px-1 py-3 hover:text-cream">{langLabel[l]}</a>)}</nav>
   </div>
 </footer>
 

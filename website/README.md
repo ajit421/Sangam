@@ -20,7 +20,7 @@ npm test         # CSV parser tests
 | Fact sheet for AI assistants | `src/pages/llms.txt.ts` → `/llms.txt` |
 | Category images (drop in `<category>.jpg`) | `src/assets/categories/` |
 
-Category names: `pipes, tanks, pumps, sanitary, taps, tiles, paints`. Units: `piece, length, litre, kg, sqft, bag, set`. Leave `price` empty to show "ask for price".
+Category names: `pipes, tanks, pumps, sanitary, taps, tiles, paints` (anything else is shown under "Other items"; capital letters and extra spaces are fine). Units: `piece, length, litre, kg, sqft, bag, set`. Leave `price` empty (or write text like "call") to show "ask for price"; `₹1,250` style prices are fine.
 
 ## Deploy for ₹0 (Cloudflare Pages)
 1. The site lives in the `website/` folder of the repo (github.com/ajit421/Sangam).

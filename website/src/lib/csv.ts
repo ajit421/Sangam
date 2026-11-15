@@ -20,6 +20,7 @@ export function parseCsv(text: string): Record<string, string>[] {
   row.push(field);
   if (row.some((f) => f.trim())) rows.push(row);
   const [head = [], ...body] = rows;
-  const keys = head.map((h) => h.trim());
+  if (head[0]) head[0] = head[0].replace(/^\uFEFF/, ''); // Excel/Sheets exports can start with a BOM
+  const keys = head.map((h) => h.trim().toLowerCase());
   return body.map((r) => Object.fromEntries(keys.map((k, i) => [k, (r[i] ?? '').trim()])));
 }
