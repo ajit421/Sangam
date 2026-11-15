@@ -1,0 +1,87 @@
+---
+import '../styles/global.css';
+import { langs, langPath, t, type Lang } from '../i18n';
+import { shop, SITE_URL } from '../data/shop';
+
+const { lang } = Astro.props as { lang: Lang };
+const d = t[lang];
+const url = SITE_URL + langPath[lang];
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HardwareStore',
+    '@id': SITE_URL + '/#store',
+    name: shop.name,
+    alternateName: [shop.nameHi, 'Sangam Hardware Mopti'],
+    description: t.en.desc,
+    url: SITE_URL + '/',
+    logo: SITE_URL + '/logo.svg',
+    image: SITE_URL + '/og.jpg',
+    telephone: shop.phones.map((p) => '+91' + p),
+    founder: { '@type': 'Person', name: shop.owner.en },
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: shop.address.street,
+      addressLocality: shop.address.locality,
+      addressRegion: shop.address.region,
+      postalCode: shop.address.pin,
+      addressCountry: 'IN',
+    },
+    geo: { '@type': 'GeoCoordinates', latitude: shop.geo.lat, longitude: shop.geo.lng },
+    hasMap: shop.mapsUrl,
+    sameAs: [shop.mapsUrl],
+    openingHoursSpecification: [{
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      opens: shop.hours.open, closes: shop.hours.close,
+    }],
+    areaServed: [
+      ...shop.areas.map((a) => ({ '@type': 'Place', name: a })),
+      { '@type': 'GeoCircle', geoMidpoint: { '@type': 'GeoCoordinates', latitude: shop.geo.lat, longitude: shop.geo.lng }, geoRadius: shop.deliveryKm * 1000 },
+    ],
+    brand: shop.brands.map((b) => ({ '@type': 'Brand', name: b })),
+    paymentAccepted: 'UPI, QR code, Credit card, Debit card',
+    priceRange: '₹',
+    knowsLanguage: ['hi', 'bho', 'en'],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: d.faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  },
+];
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{d.title}</title>
+    <meta name="description" content={d.desc} />
+    <link rel="canonical" href={url} />
+    {langs.map((l) => <link rel="alternate" hreflang={l} href={SITE_URL + langPath[l]} />)}
+    <link rel="alternate" hreflang="x-default" href={SITE_URL + '/'} />
+    <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#b91c1c" />
+    <meta name="geo.region" content="IN-BR" />
+    <meta name="geo.placename" content="Mopti Bazar, Bhojpur" />
+    <meta name="geo.position" content={`${shop.geo.lat};${shop.geo.lng}`} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={shop.name} />
+    <meta property="og:title" content={d.title} />
+    <meta property="og:description" content={d.desc} />
+    <meta property="og:url" content={url} />
+    <meta property="og:image" content={SITE_URL + '/og.jpg'} />
+    <meta property="og:locale" content={lang === 'en' ? 'en_IN' : 'hi_IN'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap" rel="stylesheet" />
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </head>
+  <body class="font-sans antialiased">
+    <slot />
+  </body>
+</html>

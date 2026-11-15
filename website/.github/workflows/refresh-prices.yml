@@ -1,0 +1,10 @@
+# Rebuilds the site every 6 hours so the owner's Google Sheet price changes go live. Free on GitHub Actions.
+name: Refresh prices
+on:
+  schedule: [{ cron: '0 */6 * * *' }]
+  workflow_dispatch:
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -fsS -X POST "${{ secrets.CF_DEPLOY_HOOK }}"

@@ -1,0 +1,25 @@
+category,name_hi,name_en,brand,price,unit
+pipes,PVC पाइप,PVC Pipe,Prince / Supreme,250,length
+pipes,CPVC पाइप (गर्म-ठंडा पानी),CPVC Pipe (hot & cold water),Prince / Supreme,350,length
+pipes,पाइप फिटिंग (एल्बो-टी-सॉकेट),Pipe Fittings (elbow / tee / socket),Prince / Supreme,10,piece
+pipes,पीतल फिटिंग,Brass Fittings,,60,piece
+tanks,पानी टंकी 500 लीटर,Water Tank 500 L,Prince / Supreme,2800,piece
+tanks,पानी टंकी 1000 लीटर,Water Tank 1000 L,Prince / Supreme,5500,piece
+pumps,चापाकल (हैंडपंप),Hand Pump (Chapakal),,2200,piece
+pumps,चापाकल पार्ट्स (बाल्टी-वाल्व-रॉड),Hand Pump Parts (bucket / valve / rod),,50,piece
+pumps,पानी मोटर 0.5 HP,Water Motor 0.5 HP,,2800,piece
+pumps,पानी मोटर 1 HP,Water Motor 1 HP,,4500,piece
+pumps,इलेक्ट्रिक मोटर (बड़ी),Electric Motor (heavy duty),,,piece
+sanitary,वॉश बेसिन,Wash Basin,Parryware / Hindware,1200,piece
+sanitary,इंडियन टॉयलेट सीट,Indian Toilet Pan,Parryware / Hindware,700,piece
+sanitary,वेस्टर्न कमोड,Western Commode,Parryware / Hindware,4500,piece
+sanitary,किचन सिंक (स्टील),Kitchen Sink (steel),,1500,piece
+taps,नल (प्लास्टिक / पीतल),Tap (plastic / brass),,80,piece
+taps,झरना (शावर),Shower,,250,piece
+tiles,फ़र्श टाइल्स,Floor Tiles,,35,sqft
+tiles,दीवार टाइल्स,Wall Tiles,,30,sqft
+paints,अंदर की दीवार का पेंट (इमल्शन),Interior Wall Paint (emulsion),Berger / Asian Paints,180,litre
+paints,बाहर की दीवार का पेंट,Exterior Wall Paint,Berger / Asian Paints,300,litre
+paints,प्राइमर,Primer,Berger / Asian Paints,150,litre
+paints,इनेमल पेंट (दरवाज़ा-ग्रिल),Enamel Paint (doors / grills),Berger / Asian Paints,250,litre
+paints,वॉल पुट्टी,Wall Putty,Berger / Asian Paints,700,bag

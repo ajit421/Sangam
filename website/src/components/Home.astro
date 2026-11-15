@@ -1,0 +1,325 @@
+---
+import { Image } from 'astro:assets';
+import { langs, langPath, langLabel, t, type Lang } from '../i18n';
+import { shop, reviews } from '../data/shop';
+import { loadProducts } from '../lib/products';
+import shopFront from '../assets/photos/shop-front.jpg';
+import shopStreet from '../assets/photos/shop-street.jpg';
+import berger from '../assets/photos/berger-machine.jpg';
+import paintShelves from '../assets/photos/paint-shelves.jpg';
+
+const { lang } = Astro.props as { lang: Lang };
+const d = t[lang];
+const products = await loadProducts();
+const name = (p: { name_hi: string; name_en: string }) => (lang === 'en' ? p.name_en : p.name_hi);
+const inr = (n: number) => n.toLocaleString('en-IN');
+
+// Category tiles: drop an image named <category>.jpg/.png/.webp into src/assets/categories and it shows up; otherwise the emoji is used.
+const catImages = import.meta.glob<{ default: ImageMetadata }>('../assets/categories/*.{jpg,jpeg,png,webp}', { eager: true });
+const catImg = (c: string) => Object.entries(catImages).find(([p]) => p.split('/').pop()!.split('.')[0] === c)?.[1].default;
+const emoji: Record<string, string> = { pipes: '🔩', tanks: '🛢️', pumps: '⚙️', sanitary: '🚽', taps: '🚿', tiles: '🧱', paints: '🎨' };
+const cats = Object.keys(d.cats).filter((c) => products.some((p) => p.category === c)) as (keyof typeof d.cats)[];
+
+const tel = 'tel:+91' + shop.phones[0];
+const wa = `https://wa.me/${shop.whatsapp}?text=${encodeURIComponent(d.order.msg.split(',')[0] + ' 🙏')}`;
+const btn = 'inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-lg font-bold shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0';
+---
+<header class="sticky top-0 z-40 border-b border-black/5 bg-white/90 backdrop-blur">
+  <div class="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2">
+    <a href={langPath[lang]} class="flex items-center gap-2">
+      <img src="/logo.svg" alt="" width="44" height="44" class="h-11 w-11" />
+      <span class="whitespace-nowrap leading-none">
+        <span class="block text-lg font-extrabold text-brand sm:text-xl">{shop.nameHi}</span>
+        <span class="block text-[10px] font-semibold tracking-widest text-sky sm:text-xs">SANGAM HARDWARE</span>
+      </span>
+    </a>
+    <nav class="ml-6 hidden gap-5 font-semibold text-stone-700 md:flex">
+      <a href="#products" class="hover:text-brand">{d.nav.products}</a>
+      <a href="#services" class="hover:text-brand">{d.nav.services}</a>
+      <a href="#about" class="hover:text-brand">{d.nav.about}</a>
+      <a href="#contact" class="hover:text-brand">{d.nav.contact}</a>
+    </nav>
+    <div class="ml-auto flex items-center rounded-full bg-stone-100 p-1 text-xs font-semibold sm:gap-1 sm:text-sm">
+      {langs.map((l) => (
+        <a href={langPath[l]} hreflang={l} aria-current={l === lang ? 'page' : undefined}
+           class:list={['rounded-full px-2 py-1 sm:px-2.5', l === lang ? 'bg-brand text-white' : 'text-stone-600 hover:text-brand']}>{langLabel[l]}</a>
+      ))}
+    </div>
+  </div>
+</header>
+
+<main class="pb-20 md:pb-0">
+  <!-- HERO -->
+  <section class="relative overflow-hidden bg-gradient-to-br from-brand via-red-700 to-brand-dark text-white">
+    <div class="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-sun/20 blur-3xl"></div>
+    <div class="pointer-events-none absolute -bottom-32 right-0 h-96 w-96 rounded-full bg-sky/40 blur-3xl"></div>
+    <div class="relative mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 md:grid-cols-2 md:py-20">
+      <div>
+        <span class="inline-block rounded-full bg-sun px-4 py-1 font-bold text-ink">⭐ {d.badge}</span>
+        <h1 class="mt-4 text-4xl font-extrabold leading-tight md:text-6xl">{d.heroTitle}</h1>
+        <p class="mt-4 text-lg text-red-50 md:text-xl">{d.heroSub}</p>
+        <div class="mt-7 flex flex-wrap gap-3">
+          <a href={tel} class={`${btn} bg-white text-brand`}>📞 {d.call}</a>
+          <a href={wa} class={`${btn} pulse-ring bg-green-500 text-white`}>💬 {d.whatsapp}</a>
+          <a href={shop.directionsUrl} class={`${btn} bg-white/10 text-white ring-2 ring-white/40`}>📍 {d.directions}</a>
+        </div>
+      </div>
+      <div class="relative mx-auto w-full max-w-md">
+        <div class="rotate-2 overflow-hidden rounded-3xl border-4 border-white shadow-2xl">
+          <Image src={shopFront} alt={`${shop.nameHi} – ${shop.address.localityHi}`} widths={[480, 900]} sizes="(min-width: 768px) 450px, 92vw" loading="eager" fetchpriority="high" class="h-auto w-full" />
+        </div>
+        <div class="float absolute -bottom-5 -left-3 rounded-2xl bg-white px-4 py-2 text-ink shadow-xl">
+          <div class="text-2xl font-extrabold">{shop.rating.value.toFixed(1)} <span class="text-sun">★★★★★</span></div>
+          <div class="text-sm font-semibold text-stone-500">Google · {shop.rating.count} reviews</div>
+        </div>
+      </div>
+    </div>
+    <div class="relative border-t border-white/15 bg-black/15"><div class="mx-auto grid max-w-6xl grid-cols-2 md:grid-cols-4">
+      {[[`${shop.yearsTrust}+`, d.stats.years], [`${shop.rating.value.toFixed(1)}★`, d.stats.rating], [`${shop.deliveryKm}`, d.stats.km], [`${shop.brands.length}+`, d.stats.brands]].map(([n, l]) => (
+        <div class="px-4 py-4 text-center"><div class="text-3xl font-extrabold text-sun">{n}</div><div class="text-sm font-semibold text-red-100">{l}</div></div>
+      ))}
+    </div></div>
+  </section>
+
+  <!-- BRANDS -->
+  <section class="overflow-hidden border-b border-black/5 bg-white py-4" aria-label={d.brandsTitle}>
+    <div class="marquee flex w-max gap-12 text-2xl font-extrabold text-stone-400">
+      {[...shop.brands, ...shop.brands].map((b, i) => <span aria-hidden={i >= shop.brands.length ? 'true' : undefined}>{b}</span>)}
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section id="products" class="mx-auto max-w-6xl px-4 py-14">
+    <h2 class="text-3xl font-extrabold md:text-4xl">{d.productsTitle}</h2>
+    <p class="mt-2 text-lg text-stone-600">{d.productsSub}</p>
+
+    <div class="mt-6 grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-8" role="group">
+      <button data-filter="all" aria-pressed="true" class="cat-btn group flex flex-col items-center justify-center rounded-2xl bg-white p-3 text-center font-bold shadow ring-brand transition aria-pressed:ring-4">
+        <span class="text-4xl">🏠</span><span class="mt-1">{d.all}</span>
+      </button>
+      {cats.map((c) => {
+        const img = catImg(c);
+        return (
+          <button data-filter={c} aria-pressed="false" class="cat-btn group relative overflow-hidden rounded-2xl bg-white font-bold shadow ring-brand transition hover:-translate-y-1 aria-pressed:ring-4">
+            {img ? <Image src={img} alt="" width={200} height={200} class="aspect-square w-full object-cover transition group-hover:scale-110" />
+                 : <span class="flex aspect-square items-center justify-center bg-gradient-to-br from-amber-100 to-red-100 text-5xl">{emoji[c]}</span>}
+            <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-1 pb-1.5 pt-6 text-sm leading-tight text-white">{d.cats[c]}</span>
+          </button>
+        );
+      })}
+    </div>
+
+    <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {products.map((p) => (
+        <article data-cat={p.category} class="reveal flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/5 transition hover:shadow-lg">
+          <span class="hidden h-16 w-16 shrink-0 items-center sm:flex justify-center rounded-xl bg-amber-50 text-3xl">{emoji[p.category] ?? '🛠️'}</span>
+          <div class="min-w-0 flex-1">
+            <h3 class="text-lg font-bold leading-snug">{name(p)}</h3>
+            {p.brand && <p class="text-sm text-stone-500">{p.brand}</p>}
+            <p class="mt-1 font-extrabold text-brand">
+              {p.price ? <>{d.from(inr(p.price))} <span class="text-sm font-semibold text-stone-500">/ {d.units[p.unit as keyof typeof d.units] ?? p.unit}</span></> : d.ask}
+            </p>
+          </div>
+          <button data-add={name(p)} data-added={d.added} aria-label={`${d.add}: ${name(p)}`}
+            class="shrink-0 rounded-xl bg-sky px-3 py-2 text-sm font-bold text-white transition hover:bg-blue-800 active:scale-95">+ {d.add}</button>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- COLOUR MACHINE -->
+  <section class="bg-gradient-to-r from-violet-700 to-fuchsia-600 text-white">
+    <div class="mx-auto grid max-w-6xl items-center gap-8 px-4 py-14 md:grid-cols-2">
+      <div class="reveal grid grid-cols-2 gap-3">
+        <Image src={berger} alt="Berger ColorBank" widths={[300, 600]} sizes="(min-width: 768px) 280px, 45vw" class="h-72 w-full rounded-2xl object-cover shadow-xl" />
+        <Image src={paintShelves} alt="" widths={[300, 600]} sizes="(min-width: 768px) 280px, 45vw" class="mt-8 h-72 w-full rounded-2xl object-cover shadow-xl" />
+      </div>
+      <div class="reveal">
+        <span class="text-5xl">🎨</span>
+        <h2 class="mt-2 text-3xl font-extrabold md:text-4xl">{d.colorTitle}</h2>
+        <p class="mt-3 text-xl text-fuchsia-50">{d.colorText}</p>
+        <a href={wa} class={`${btn} mt-6 bg-white text-violet-800`}>💬 {d.whatsapp}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services" class="mx-auto max-w-6xl px-4 py-14">
+    <h2 class="text-3xl font-extrabold md:text-4xl">{d.servicesTitle}</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {d.services.map(([icon, title, text]) => (
+        <div class="reveal rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-lg">
+          <span class="text-4xl">{icon}</span>
+          <h3 class="mt-2 text-xl font-bold">{title}</h3>
+          <p class="mt-1 text-stone-600">{text}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="bg-sky text-white">
+    <div class="mx-auto grid max-w-6xl items-center gap-8 px-4 py-14 md:grid-cols-2">
+      <Image src={shopStreet} alt={`${shop.nameHi}, ${shop.address.localityHi}`} widths={[480, 900]} sizes="(min-width: 768px) 560px, 92vw" class="reveal w-full rounded-3xl object-cover shadow-2xl" />
+      <div class="reveal">
+        <span class="inline-block rounded-full bg-sun px-4 py-1 font-bold text-ink">{shop.yearsTrust}+ {d.stats.years}</span>
+        <h2 class="mt-3 text-3xl font-extrabold md:text-4xl">{d.aboutTitle}</h2>
+        <p class="mt-3 text-xl text-blue-100">{d.aboutText}</p>
+        <p class="mt-5 text-lg"><span class="text-blue-200">{d.ownerLabel}:</span> <strong>{lang === 'en' ? shop.owner.en : shop.owner.hi}</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="mx-auto max-w-6xl px-4 py-14">
+    <div class="flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <h2 class="text-3xl font-extrabold md:text-4xl">{d.reviewsTitle}</h2>
+        <p class="mt-1 text-lg"><strong class="text-2xl">{shop.rating.value.toFixed(1)}</strong> <span class="text-amber-500">★★★★★</span> · {shop.rating.count} Google reviews</p>
+      </div>
+      <div class="flex gap-2">
+        <a href={shop.mapsUrl} class="rounded-xl bg-white px-4 py-2 font-bold text-sky shadow ring-1 ring-black/5">{d.seeAll} →</a>
+        <a href={shop.mapsUrl} class="rounded-xl bg-amber-400 px-4 py-2 font-bold text-ink shadow">⭐ {d.writeReview}</a>
+      </div>
+    </div>
+    <div class="mt-6 flex snap-x gap-4 overflow-x-auto pb-3">
+      {reviews.map((r) => (
+        <figure class="w-72 shrink-0 snap-start rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+          <div class="text-amber-500">★★★★★</div>
+          <blockquote class="mt-2 text-lg">“{lang === 'en' ? r.en : r.hi}”</blockquote>
+          <figcaption class="mt-3 font-bold">{r.name} <span class="block text-xs font-normal text-stone-500">{d.reviewNote}</span></figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="mx-auto max-w-3xl px-4 pb-14">
+    <h2 class="text-3xl font-extrabold md:text-4xl">{d.faqTitle}</h2>
+    <div class="mt-5 space-y-3">
+      {d.faq.map(([q, a]) => (
+        <details class="group rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/5">
+          <summary class="flex cursor-pointer list-none items-center justify-between text-lg font-bold">{q}<span class="text-2xl text-brand transition group-open:rotate-45">+</span></summary>
+          <p class="mt-2 text-stone-700">{a}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="bg-white">
+    <div class="mx-auto grid max-w-6xl gap-8 px-4 py-14 md:grid-cols-2">
+      <div>
+        <h2 class="text-3xl font-extrabold md:text-4xl">{d.contactTitle}</h2>
+        <dl class="mt-5 space-y-4 text-lg">
+          <div><dt class="font-bold text-brand">🕘 {d.hoursLabel}</dt><dd>{d.hours}</dd><dd class="text-stone-600">🌙 {d.night}</dd></div>
+          <div><dt class="font-bold text-brand">📍 {d.addressLabel}</dt>
+            <dd>{lang === 'en' ? `${shop.address.street}, ${shop.address.locality}, ${shop.address.district}, ${shop.address.region} ${shop.address.pin}` : `${shop.address.streetHi}, ${shop.address.localityHi}, ${shop.address.districtHi}, ${shop.address.regionHi} ${shop.address.pin}`}</dd></div>
+          <div><dt class="font-bold text-brand">📞 {d.phoneLabel}</dt>
+            <dd class="flex flex-wrap gap-x-4">{shop.phones.map((p) => <a href={`tel:+91${p}`} class="font-bold text-sky underline">{p.slice(0, 5)} {p.slice(5)}</a>)}</dd></div>
+          <div><dt class="font-bold text-brand">🚚 {d.areaLabel}</dt><dd>{(lang === 'en' ? shop.areas : shop.areasHi).join(', ')} · {shop.deliveryKm} km</dd></div>
+        </dl>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href={tel} class={`${btn} bg-brand text-white`}>📞 {d.call}</a>
+          <a href={wa} class={`${btn} bg-green-500 text-white`}>💬 WhatsApp</a>
+          <a href={shop.directionsUrl} class={`${btn} bg-sky text-white`}>📍 {d.directions}</a>
+        </div>
+      </div>
+      <iframe src={shop.mapEmbed} title={`${shop.name} – Google Maps`} loading="lazy" referrerpolicy="strict-origin-when-cross-origin"
+        class="h-80 w-full rounded-3xl border-0 shadow-lg md:h-full md:min-h-96"></iframe>
+    </div>
+  </section>
+</main>
+
+<footer class="bg-ink pb-24 pt-8 text-center text-stone-400 md:pb-8">
+  <img src="/logo.svg" alt="" width="40" height="40" class="mx-auto h-10 w-10" />
+  <p class="mt-2 font-bold text-white">{shop.nameHi} · {shop.name}</p>
+  <p>{d.footer} · <a href={tel} class="text-sun">{shop.phones[0]}</a></p>
+  <p class="mt-2 text-sm">{langs.map((l) => <a href={langPath[l]} class="mx-2 hover:text-white">{langLabel[l]}</a>)}</p>
+</footer>
+
+<!-- Mobile action bar -->
+<div class="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-black/10 bg-white text-center text-sm font-bold shadow-2xl md:hidden">
+  <a href={tel} class="py-2.5 text-brand"><span class="block text-2xl">📞</span>{d.call}</a>
+  <a href={wa} class="bg-green-500 py-2.5 text-white"><span class="block text-2xl">💬</span>WhatsApp</a>
+  <button data-open-cart class="py-2.5 text-sky"><span class="block text-2xl">🛒</span>{d.order.view} (<span data-count>0</span>)</button>
+</div>
+
+<!-- Desktop floating order button (shows once something is added) -->
+<button data-open-cart data-cart-fab hidden class="fixed bottom-6 right-6 z-40 hidden rounded-full bg-sky px-5 py-3 text-lg font-bold text-white shadow-2xl md:block">🛒 {d.order.view} (<span data-count>0</span>)</button>
+
+<dialog id="cart" data-wa={shop.whatsapp} data-msg={d.order.msg} data-msg-name={d.order.msgName} data-msg-village={d.order.msgVillage}
+  class="m-auto w-[min(32rem,94vw)] rounded-3xl p-0 shadow-2xl backdrop:bg-black/50">
+  <div class="p-5">
+    <div class="flex items-center justify-between">
+      <h2 class="text-2xl font-extrabold">🛒 {d.order.title}</h2>
+      <form method="dialog"><button class="rounded-full bg-stone-100 px-3 py-1 font-bold" aria-label={d.order.close}>✕</button></form>
+    </div>
+    <p data-empty class="mt-4 text-stone-600">{d.order.empty}</p>
+    <ul data-list class="mt-4 max-h-64 space-y-2 overflow-y-auto"></ul>
+    <div class="mt-4 grid gap-2">
+      <input data-name type="text" placeholder={d.order.name} autocomplete="name" class="rounded-xl border border-stone-300 px-4 py-3 text-lg" />
+      <input data-village type="text" placeholder={d.order.village} class="rounded-xl border border-stone-300 px-4 py-3 text-lg" />
+    </div>
+    <div class="mt-4 flex gap-2">
+      <button data-send class="flex-1 rounded-xl bg-green-500 px-4 py-3 text-lg font-bold text-white disabled:opacity-40">💬 {d.order.send}</button>
+      <button data-clear class="rounded-xl bg-stone-100 px-4 py-3 font-bold">{d.order.clear}</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  // Category filter
+  const filters = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  filters.forEach((btn) => btn.addEventListener('click', () => {
+    const c = btn.dataset.filter;
+    document.querySelectorAll<HTMLElement>('[data-cat]').forEach((el) => (el.hidden = c !== 'all' && el.dataset.cat !== c));
+    filters.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+  }));
+
+  // Order list → WhatsApp message (no backend, no cost)
+  const dlg = document.getElementById('cart') as HTMLDialogElement;
+  const cart = new Map<string, number>();
+  const list = dlg.querySelector('[data-list]')!;
+  const send = dlg.querySelector<HTMLButtonElement>('[data-send]')!;
+
+  function render() {
+    const total = [...cart.values()].reduce((a, b) => a + b, 0);
+    document.querySelectorAll('[data-count]').forEach((el) => (el.textContent = String(total)));
+    document.querySelector<HTMLElement>('[data-cart-fab]')!.hidden = total === 0;
+    (dlg.querySelector('[data-empty]') as HTMLElement).hidden = total > 0;
+    send.disabled = total === 0;
+    list.replaceChildren(...[...cart].map(([name, qty]) => {
+      const li = document.createElement('li');
+      li.className = 'flex items-center gap-2 rounded-xl bg-stone-50 p-2';
+      li.innerHTML = '<span class="flex-1 font-semibold"></span><button data-d="-1" class="h-9 w-9 rounded-lg bg-white text-xl font-bold shadow" aria-label="−">−</button><span class="w-8 text-center text-lg font-bold"></span><button data-d="1" class="h-9 w-9 rounded-lg bg-white text-xl font-bold shadow" aria-label="+">+</button>';
+      li.querySelector('span')!.textContent = name;
+      li.querySelectorAll('span')[1].textContent = String(qty);
+      li.querySelectorAll<HTMLButtonElement>('button').forEach((b) => b.addEventListener('click', () => {
+        const q = qty + Number(b.dataset.d);
+        q > 0 ? cart.set(name, q) : cart.delete(name);
+        render();
+      }));
+      return li;
+    }));
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-add]').forEach((b) => b.addEventListener('click', () => {
+    const name = b.dataset.add!;
+    cart.set(name, (cart.get(name) ?? 0) + 1);
+    const label = b.textContent;
+    b.textContent = b.dataset.added!;
+    setTimeout(() => (b.textContent = label), 1200);
+    render();
+  }));
+  document.querySelectorAll('[data-open-cart]').forEach((b) => b.addEventListener('click', () => dlg.showModal()));
+  dlg.querySelector('[data-clear]')!.addEventListener('click', () => { cart.clear(); render(); });
+  send.addEventListener('click', () => {
+    const v = (s: string) => (dlg.querySelector(s) as HTMLInputElement).value.trim();
+    const lines = [dlg.dataset.msg, '', ...[...cart].map(([n, q]) => `• ${n} × ${q}`), ''];
+    if (v('[data-name]')) lines.push(`${dlg.dataset.msgName}: ${v('[data-name]')}`);
+    if (v('[data-village]')) lines.push(`${dlg.dataset.msgVillage}: ${v('[data-village]')}`);
+    location.href = `https://wa.me/${dlg.dataset.wa}?text=${encodeURIComponent(lines.join('\n'))}`;
+  });
+  render();
+</script>
